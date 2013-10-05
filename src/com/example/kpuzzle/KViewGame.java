@@ -7,24 +7,46 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.View;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
-public class KViewGame extends View{
+public class KViewGame extends View
+{
 	public class Item{
 		public int num = -1;
 		public int pos = -1;
 	}
 	
+	public static  int current_level = 1;
+	
 	boolean game_finish = false;
-    Paint paint = new Paint();
+    Paint   paint       = new Paint();
+    int     fpos        = 15;
     Item []items;
-    int fpos = 15;
+    
+    Context current_context = null;
+    Bitmap  current_bitmap  = null;
     
 	public KViewGame(Context context){
 		super(context);
+		current_context = context;
         paint.setColor(Color.BLACK);
         
         items = new Item[15];
-		
+        
+        String bmp_file = "lev";
+        
+        if(current_level < 10)
+        {
+        	bmp_file += "00" + Integer.toString(current_level) + "";
+        }
+        else if(current_level < 100)
+        {
+        	bmp_file += "0" + Integer.toString(current_level) + "";
+        }
+        
+        current_bitmap = getBitmap(bmp_file);
+        
         for(int i = 0; i < 15; i++){
         	items[i] = new Item();
         	items[i].num = i + 1;
@@ -81,6 +103,11 @@ public class KViewGame extends View{
 		
 		game_finish = true;
 		
+		if(current_level < 5)
+		  current_level ++;
+		else
+		  current_level = 1;
+		
 		MainActivity ma = (MainActivity)this.getContext();
 		ma.fine();
 	}
@@ -94,7 +121,9 @@ public class KViewGame extends View{
     	int tsize = iwidth / 4;
     	
     	paint.setTextSize((float)tsize);
-    	
+    	canvas.drawBitmap(current_bitmap, 
+    			          new Rect(0, 0, current_bitmap.getWidth(), current_bitmap.getHeight()), 
+    			          new Rect(0, 0, this.getWidth(), this.getHeight()), paint);
 //        /*
         for(int i = 0; i < 15; i++){
         	int num = items[i].num;
@@ -162,4 +191,23 @@ public class KViewGame extends View{
     	invalidate();
     	return true;
     }
+    
+    public Bitmap getBitmap(String sid)
+	{
+		Bitmap bmp = null;
+
+		BitmapFactory.Options opts = new BitmapFactory.Options();
+		opts.inPreferredConfig = Bitmap.Config.ARGB_8888;
+
+		int id = current_context.getResources().getIdentifier(sid, "drawable",
+				current_context.getPackageName());
+		bmp = BitmapFactory.decodeResource(current_context.getResources(), id,
+				opts);
+
+		if (bmp == null) {
+			System.out.println("No bitmap found");
+		}
+
+		return bmp;
+	}
 }
