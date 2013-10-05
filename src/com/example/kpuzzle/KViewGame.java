@@ -120,6 +120,11 @@ public class KViewGame extends View
     	int iheight = sheight / 4;
     	int tsize = iwidth / 4;
     	
+    	int bmp_width = current_bitmap.getWidth();
+    	int bmp_height = current_bitmap.getHeight();
+    	int bmp_iwidth = current_bitmap.getWidth() / 4;
+    	int bmp_iheight = current_bitmap.getHeight() / 4;
+    	
     	paint.setTextSize((float)tsize);
     	canvas.drawBitmap(current_bitmap, 
     			          new Rect(0, 0, current_bitmap.getWidth(), current_bitmap.getHeight()), 
@@ -136,8 +141,19 @@ public class KViewGame extends View
         	float rx = (col + 1) * iwidth;
         	float ry = (row + 1) * iheight;
         	
+        	int brow = (num - 1) / 4; 
+        	int bcol = (num - 1) % 4; 
+        	float blx = bcol * bmp_iwidth;
+        	float bly = brow * bmp_iheight;
+        	float brx = (bcol + 1) * bmp_iwidth;
+        	float bry = (brow + 1) * bmp_iheight;
+        	
             paint.setColor(Color.BLACK);
         	canvas.drawRect(lx, ly, rx, ry, paint);
+        	
+        	canvas.drawBitmap(current_bitmap, 
+			          new Rect((int)blx, (int)bly, (int)brx, (int)bry), 
+			          new Rect((int)lx, (int)ly, (int)rx, (int)ry), paint);
 
             paint.setColor(Color.RED);
             canvas.drawLine(lx, ly, rx, ly, paint);
