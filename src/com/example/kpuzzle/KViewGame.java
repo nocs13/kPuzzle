@@ -18,6 +18,7 @@ public class KViewGame extends View
 	}
 	
 	public static  int current_level = 1;
+	public static  int number_of_levels = 5;
 	
 	boolean game_finish = false;
     Paint   paint       = new Paint();
@@ -66,11 +67,14 @@ public class KViewGame extends View
         		}
         	}
         }
+
+        invalidate();
 	}
 	
 	public void reset(){
 		items = null;
         items = new Item[15];
+        fpos  = 15;
 		
         for(int i = 0; i < 15; i++){
         	items[i] = new Item();
@@ -91,25 +95,50 @@ public class KViewGame extends View
         		}
         	}
         }
+        
+        if(current_bitmap != null)
+        {
+        	current_bitmap.recycle();
+        	current_bitmap = null;
+        }
+        
+        String bmp_file = "lev";
+        
+        if(current_level < 10)
+        {
+        	bmp_file += "00" + Integer.toString(current_level) + "";
+        }
+        else if(current_level < 100)
+        {
+        	bmp_file += "0" + Integer.toString(current_level) + "";
+        }
+        
+        current_bitmap = getBitmap(bmp_file);
+        
+        invalidate();
 	}
 	
 	public void check(){
 		if(game_finish)
 			return;
 		
-		for(int i = 0; i < 15; i++)
+		for(int i = 0; i < 3; i++)
 			if(items[i].pos != i)
 				return;
 		
 		game_finish = true;
-		
-		if(current_level < 5)
-		  current_level ++;
-		else
-		  current_level = 1;
-		
 		MainActivity ma = (MainActivity)this.getContext();
-		ma.fine();
+		
+		if(current_level < number_of_levels)
+		{
+		  current_level ++;
+		  ma.next();
+		}
+		else
+		{
+		  current_level = 1;
+  	      ma.fine();
+		}		
 	}
 	
     @Override
@@ -148,6 +177,13 @@ public class KViewGame extends View
         	float brx = (bcol + 1) * bmp_iwidth;
         	float bry = (brow + 1) * bmp_iheight;
         	
+        	int frow = fpos / 4; 
+        	int fcol = fpos % 4; 
+        	float flx = fcol * iwidth;
+        	float fly = frow * iheight;
+        	float frx = (fcol + 1) * iwidth;
+        	float fry = (frow + 1) * iheight;
+        	
             paint.setColor(Color.BLACK);
         	canvas.drawRect(lx, ly, rx, ry, paint);
         	
@@ -160,12 +196,16 @@ public class KViewGame extends View
             canvas.drawLine(rx, ly, rx, ry, paint);
             canvas.drawLine(rx, ry, lx, ry, paint);
             canvas.drawLine(lx, ry, lx, ly, paint);
-        	
+            /*        	
         	String text = Integer.toString(num);
         	
             paint.setColor(Color.YELLOW);
         	canvas.drawText(text, (float)((lx + rx) * 0.5 - (float)(tsize * 0.5)), 
         					(float)((ly + ry) * 0.5 + (float)(tsize * 0.5)), paint);
+            */
+        	paint.setColor(Color.RED);
+        	paint.setAlpha(90);
+            canvas.drawRect(flx, fly, frx, fly, paint);
         }
 //        */
     }
@@ -205,6 +245,8 @@ public class KViewGame extends View
         check();
         
     	invalidate();
+    	
+    	System.out.print("touch updated");
     	return true;
     }
     

@@ -168,7 +168,32 @@ public class MainActivity extends Activity {
     	AlertDialog ad = new AlertDialog.Builder(this).create();
     	ad.setCancelable(false);
     	ad.setMessage("Congradulations...");
-    	ad.setButton("Again", new DialogInterface.OnClickListener() {  
+    	ad.setButton("Finish", new DialogInterface.OnClickListener() {  
+    	    @Override  
+    	    public void onClick(DialogInterface dialog, int which) {  
+    	        dialog.dismiss();
+    	        gameQuit();
+    	        //gameStart();
+    	    }  
+    	});  
+/*    	ad.setButton2("Quit", new DialogInterface.OnClickListener() {  
+    	    @Override  
+    	    public void onClick(DialogInterface dialog, int which) {  
+    	        dialog.dismiss();
+    	        gameQuit();
+    	    }  
+    	});*/  
+    	ad.show();    	
+    }
+    
+    public void next(){
+    	m_state = 1;
+        setContentView(m_viewLoading.layout());
+    	
+    	AlertDialog ad = new AlertDialog.Builder(this).create();
+    	ad.setCancelable(false);
+    	ad.setMessage("Congradulations...");
+    	ad.setButton("Next", new DialogInterface.OnClickListener() {  
     	    @Override  
     	    public void onClick(DialogInterface dialog, int which) {  
     	        dialog.dismiss();
